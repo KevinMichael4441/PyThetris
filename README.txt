@@ -5,6 +5,3 @@ Steps to run:
 1) In the terminal, run python
 2) In python, import Tetris
 3) Run Tetris.game()
-
-
-Kindly mail c00313609@setu.ie in case of any discrepancies
