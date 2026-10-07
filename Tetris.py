@@ -44,6 +44,42 @@ def process_on_press(key):
 # Everything below is purely my work
 
 
+
+
+# Func to check if is filled.
+def isRowFilled(t_grid, t_currentRow, t_maxCols):
+    colCount = 0;
+    print("CURRENT ROW: ")
+    print(t_currentRow)
+    
+    for col in t_grid:
+        if col[t_currentRow] == _BLOCK:
+            colCount += 1;
+    
+    if colCount == t_maxCols:
+        return True
+    else:
+        return False
+        
+        
+        
+# Searched up syntax for negative range    
+# Func to clear za row
+def clearRow(t_grid, t_currentRow, t_maxCols):
+
+    for i in range(t_currentRow, -1, -1):
+
+
+        for col in range(t_maxCols):
+            if currentRow - 1 >= 0:
+                t_grid[col][currentRow] = t_grid[col][currentRow - 1]
+            
+        currentRow -= 1
+        
+    return t_grid
+
+
+
 def game():
     # Setting up
     global key_pressed
@@ -100,6 +136,7 @@ def game():
         if frameTime > _FRAMETIME:
             #print(frameTime)
             frameTime = 0
+            rowToPass = activeBlock[0]
             
             #drop block one level down
             if activeBlock[0] + 1 == _ROWS: #last row
@@ -111,6 +148,10 @@ def game():
                 activeBlock[0] += 1
                 grid[activeBlock[1]][activeBlock[0]] = _BLOCK
                 
+                
+                
+            if isRowFilled(grid, rowToPass, _COLUMNS):
+                grid = clearRow(grid, rowToPass, _COLUMNS)
                 
             print(activeBlock[0], activeBlock[1])    
             clear_the_terminal()
