@@ -68,13 +68,11 @@ def isRowFilled(t_grid, t_currentRow, t_maxCols):
 def clearRow(t_grid, t_currentRow, t_maxCols):
 
     for i in range(t_currentRow, -1, -1):
-
-
         for col in range(t_maxCols):
-            if currentRow - 1 >= 0:
-                t_grid[col][currentRow] = t_grid[col][currentRow - 1]
+            if t_currentRow - 1 >= 0:
+                t_grid[col][t_currentRow] = t_grid[col][t_currentRow - 1]
             
-        currentRow -= 1
+        t_currentRow -= 1
         
     return t_grid
 
