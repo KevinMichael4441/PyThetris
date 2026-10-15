@@ -10,11 +10,9 @@ from textual.scroll_view import ScrollView
 from rich.style import Style
 from time import monotonic
 
-_ROWS = 10
-_COLUMNS = 5
+
 _INTERVAL = 0.3
 _FRAMETIME = 0.1
-_EMPTYLIST = [None,None]
 
 
 tetris_theme = Theme(   
@@ -64,30 +62,22 @@ class TetrisGrid(Widget):
         super().__init__()
         self.rows = rows
         self.columns = columns
-        self.grid = [["grey0" for i in range(_ROWS)] for i in range(_COLUMNS)]      # setting all block to black
-        self.activeBlock = _EMPTYLIST
+        self.grid = [[_BLACK for i in range(self.rows)] for i in range(self.columns)]      # setting all block to black
+        self.activeBlock = [None, None]
         self.frameTime = 0
-        
+        self.currentFrameTime = monotonic()
         
         
     def on_mount(self) -> None:
         global _INTERVAL
-        #self.currentFrameTime = monotonic()
-        #self.last_time = self.start_time
-        # Call self.tick every 0.1 seconds (10 FPS)
+        # Call self.tick every _INTERVAL seconds
         self.set_interval(_INTERVAL, self.tick)
         self.tick()  # immediate first update
 
     def tick(self) -> None:
         global _FRAMETIME
-        self.currentFrameTime = monotonic()
-        #self.last_time = now
-        #self.elapsed = now - self.start_time
-        # Use delta_time for smooth, frame-rate independent logic
-        # Example: move an object at 10 units per second
-        # position += 10 * delta_time
-        #self.update(f"Elapsed: {self.elapsed:.2f}s")
-        
+        self.previoousFrameTime = self.currentFrameTime
+        self.currentFrameTime = monotonic()        
         
         # Set an activeBlock - block that falls
         if (self.activeBlock[0] == None):
@@ -98,12 +88,13 @@ class TetrisGrid(Widget):
             
             if (self.grid[self.activeBlock[1]][self.activeBlock[0]]) != _BLACK:
                 self.remove()       # Will this work?
+                # Mount End Game Screen
             
             self.grid[self.activeBlock[1]][self.activeBlock[0]] = self.activeColor
             
             
         # Updating dt (and moving block down if dt is over threshold)
-        self.frameTime += (monotonic() - self.currentFrameTime) 
+        self.frameTime += (self.currentFrameTime - self.previoousFrameTime) 
         if self.frameTime > _FRAMETIME:
             #print(frameTime)
             self.frameTime = 0
@@ -113,7 +104,7 @@ class TetrisGrid(Widget):
             if self.activeBlock[0] + 1 == self.rows: #last row
                 self.activeBlock[0] = None
             elif self.grid[self.activeBlock[1]][self.activeBlock[0]+1] != _BLACK:  # there's block below
-                activeBlock[0] = None
+                self.activeBlock[0] = None
             else:
                 self.grid[self.activeBlock[1]][self.activeBlock[0]] = _BLACK
                 self.activeBlock[0] += 1
@@ -151,10 +142,10 @@ class TetrisGrid(Widget):
     
         self.refresh()
         
-    def action_move_left():
+    def move_left():
         pass
     
-    def action_move_right():
+    def move_right():
         pass
     
     def render_line(self, y: int) -> Strip:
@@ -213,8 +204,6 @@ class Tetris(App):    # Function for the main application
         # Event handler for button pressed in menu
         button_id = event.button.id
         global gridSelected
-        global _ROWS
-        global _COLUMNS 
         
         if button_id == "Large":
             _ROWS = 10
