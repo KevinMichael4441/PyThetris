@@ -19,9 +19,13 @@ def clear_the_terminal():
 
 
 def build_clean_grid():
+    global _ROWS
+    global _COLUMNS
     return [["  " for i in range(_ROWS)] for i in range(_COLUMNS)]
 
 def display_grid(grid):
+    global _ROWS
+    global _COLUMNS
     the_columns = tuple(range(0, _COLUMNS))
     the_rows = tuple(range(0, _ROWS))
     for r in the_rows:
@@ -68,31 +72,66 @@ def isRowFilled(t_grid, t_currentRow, t_maxCols):
 def clearRow(t_grid, t_currentRow, t_maxCols):
 
     for i in range(t_currentRow, -1, -1):
-
-
         for col in range(t_maxCols):
-            if currentRow - 1 >= 0:
-                t_grid[col][currentRow] = t_grid[col][currentRow - 1]
+            if t_currentRow - 1 >= 0:
+                t_grid[col][t_currentRow] = t_grid[col][t_currentRow - 1]
             
-        currentRow -= 1
+        t_currentRow -= 1
         
     return t_grid
 
 
 
+def startGame():
+    global key_pressed
+    global _ROWS
+    global _COLUMNS
+    
+    
+    print("Z for 10x5 grid")
+    print("X for 8x4 grid")
+    print("C for 4x2 grid")
+    
+    while True:
+        if key_pressed == "z":
+            
+            _ROWS = 10
+            _COLUMNS = 5
+            key_pressed = None
+            return
+        elif key_pressed == "x":
+            _ROWS = 8
+            _COLUMNS = 4
+            key_pressed = None
+            return
+        elif key_pressed == "c":
+            _ROWS = 4
+            _COLUMNS = 2
+            key_pressed = None
+            return;
+            
+
+
 def game():
     # Setting up
     global key_pressed
+    global _ROWS
+    global _COLUMNS
+   
+    listener = keyboard.Listener( on_press=process_on_press )
+    listener.start()
+
+    startGame()
+    
+    
     grid = build_clean_grid()
     activeBlock = _EMPTYLIST
     currentFrameTime = 0
     frameTime = 0 #ms 
 
-    listener = keyboard.Listener( on_press=process_on_press )
-    listener.start()
 
     display_grid(grid)
-    
+   
     while(True):
         currentFrameTime = time.time()
         
@@ -119,7 +158,7 @@ def game():
                         activeBlock[1] -= 1
                         grid[activeBlock[1]][activeBlock[0]] = _BLOCK
             elif key_pressed == "Key.right":
-                if activeBlock[1] + 1 <= 4:
+                if activeBlock[1] + 1 <= _COLUMNS - 1:
                     if grid[activeBlock[1] + 1][activeBlock[0]] == _BLANK:
                         grid[activeBlock[1]][activeBlock[0]] = _BLANK
                         activeBlock[1] += 1
