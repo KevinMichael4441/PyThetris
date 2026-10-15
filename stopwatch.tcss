@@ -1,4 +1,0 @@
-StopWatch {
-	layout: horizontal;
-	background: pink;
-}

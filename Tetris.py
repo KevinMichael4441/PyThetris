@@ -1,3 +1,9 @@
+from textual.app import App # The main application
+from textual.containers import ScrollableContainer
+from textual.widgets import Button, Footer, Header, Static
+from textual.theme import Theme
+
+
 _ROWS = 10
 _COLUMNS = 5
 _INTERVAL = 0.3
@@ -5,12 +11,101 @@ _BLANK = "  "
 _BLOCK = "\u2588\u2588"
 _FRAMETIME = 0.1
 _EMPTYLIST = [None,None]
+gridSelected = False
 
+
+tetris_theme = Theme(   
+    name="tetris",
+    primary="#88C0D0",
+    secondary="#81A1C1",
+    accent="#B48EAD",
+    foreground="#D8DEE9",
+    background="#2E3440",
+    success="#A3BE8C",
+    warning="#B88CBE",
+    error="#BF616A",
+    #surface="#B4252",
+    panel="#434C5E",
+    dark=True,
+    variables={   
+        "block-cursor-text-style": "none",
+        "footer-key-foreground": "#88C0D0",        
+        "input-selection-background": "#81a1c1 35%",  
+    },
+)
 
 import time
 import sys
 from pynput import keyboard
 import random
+
+
+
+
+class Tetris(App):    # Function for the main application
+    BINDINGS = [
+            # (key, action name, description)
+            ("w", "toggle_dark_mode", "To Toggle Dark Mode"),
+            ("a", "move_left", "To move left"),
+            ("d", "move_right", "To move Right"),
+        ]
+       
+     
+    CSS_PATH = "tetris.tcss"    
+    
+    
+    
+    def on_mount(self) -> None:
+    # Register the theme
+        self.register_theme(tetris_theme)  
+    # Set the app's theme
+        self.theme = "tetris"
+    
+    
+    
+    def compose(self):      # What  widgets  is this app composed of?   
+        
+        # Some widgets don't matter the order which you yield them; But yield Button("") for example
+        yield Header(show_clock = True)
+        yield Footer()
+        
+        # yield widgets inside a coontainer. You can name the container as well
+        if (not gridSelected):
+            yield Button("10x5", id="Large", variant="warning", classes = "box")
+            yield Button("8x4", id="Medium", variant="warning", classes = "box")
+            yield Button("4x2", id="Small", variant="warning", classes = "box")
+            yield Button("6x7", id="Funny", variant="warning", classes = "box")
+        
+        
+    # Action methods should start with action and these are what's associated to actions.
+    def action_toggle_dark_mode(self):
+        self.theme = (            
+                        "textual-dark" if self.theme == "textual-light" else "textual-light"
+                    )
+
+
+
+if __name__ == "__main__":  # Running the application on main
+    Tetris().run()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def clear_the_terminal():
