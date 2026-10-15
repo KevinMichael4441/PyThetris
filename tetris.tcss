@@ -12,3 +12,23 @@ Block {
 	width: 50%;
     border: solid black;
 }
+
+
+TetrisGrid .grid--red-square {
+    background: #AD2337;
+}
+TetrisGrid .grid--blue-square {
+    background: #2341AD;
+}
+TetrisGrid .grid--yellow-square {
+    background: #DED733;
+}
+TetrisGrid .grid--green-square {
+    background: #3A8F31;
+}
+TetrisGrid .grid--black-square {
+    background: #2B2727;
+}
+TetrisGrid .grid--orange-square {
+    background: #C9721C;
+}
