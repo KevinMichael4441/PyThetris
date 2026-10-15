@@ -1,10 +1,10 @@
-Screen {
+Menu {
     layout: grid;
     grid-size: 2 2;
 }
 
 .box {
-    height: 100%;
-	width: 100%;
-    border: solid green;
+    height: 50%;
+	width: 50%;
+    border: solid black;
 }

@@ -1,7 +1,12 @@
-from textual.app import App # The main application
+from textual.app import App, ComposeResult # The main application
 from textual.containers import ScrollableContainer
 from textual.widgets import Button, Footer, Header, Static
 from textual.theme import Theme
+from textual.strip import Strip
+from textual.widget import Widget
+from rich.segment import Segment
+from textual.geometry import Size
+from textual.scroll_view import ScrollView
 
 
 _ROWS = 10
@@ -40,7 +45,51 @@ from pynput import keyboard
 import random
 
 
+class CheckerBoard(Widget):
+    """Render an 8x8 checkerboard."""
 
+    COMPONENT_CLASSES = {
+        "checkerboard--white-square",
+        "checkerboard--black-square",
+    }
+
+    DEFAULT_CSS = """
+    CheckerBoard .checkerboard--white-square {
+        background: #A5BAC9;
+    }
+    CheckerBoard .checkerboard--black-square {
+        background: #004578;
+    }
+    """
+
+    def render_line(self, y: int) -> Strip:
+        """Render a line of the widget. y is relative to the top of the widget."""
+
+        row_index = y // 4  # four lines per row
+
+        if row_index >= 8:
+            return Strip.blank(self.size.width)
+
+        is_odd = row_index % 2
+
+        white = self.get_component_rich_style("checkerboard--white-square")
+        black = self.get_component_rich_style("checkerboard--black-square")
+
+        segments = [
+            Segment(" " * 8, black if (column + is_odd) % 2 else white)
+            for column in range(8)
+        ]
+        strip = Strip(segments, 8 * 8)
+        return strip
+
+
+
+class Menu(Widget):
+    def compose(self):
+        yield Button("10x5", id="Large", variant="success", classes = "box")
+        yield Button("8x4", id="Medium", variant="warning", classes = "box")
+        yield Button("4x2", id="Small", variant="success", classes = "box")
+        yield Button("6x7", id="Funny", variant="warning", classes = "box")
 
 class Tetris(App):    # Function for the main application
     BINDINGS = [
@@ -62,6 +111,35 @@ class Tetris(App):    # Function for the main application
         self.theme = "tetris"
     
     
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        # Event handler for button pressed in menu
+        button_id = event.button.id
+        global gridSelected
+        global _ROWS
+        global _COLUMNS 
+        
+        if button_id == "Large":
+            _ROWS = 10
+            _COLUMNS = 5
+        elif button_id == "Medium":
+            _ROWS = 8
+            _COLUMNS = 4
+        elif button_id == "Small":
+            _ROWS = 4
+            _COLUMNS = 2
+        elif button_id == "Funny":
+            _ROWS = 6
+            _COLUMNS = 7
+        
+        gridSelected = True
+        menu = self.query_one(Menu)
+        menu.remove()
+        
+        checkerboard = CheckerBoard()
+        self.mount(checkerboard) 
+        
+
+    
     
     def compose(self):      # What  widgets  is this app composed of?   
         
@@ -70,12 +148,8 @@ class Tetris(App):    # Function for the main application
         yield Footer()
         
         # yield widgets inside a coontainer. You can name the container as well
-        if (not gridSelected):
-            yield Button("10x5", id="Large", variant="warning", classes = "box")
-            yield Button("8x4", id="Medium", variant="warning", classes = "box")
-            yield Button("4x2", id="Small", variant="warning", classes = "box")
-            yield Button("6x7", id="Funny", variant="warning", classes = "box")
-        
+        yield Menu()
+            
         
     # Action methods should start with action and these are what's associated to actions.
     def action_toggle_dark_mode(self):
