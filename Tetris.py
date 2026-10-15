@@ -7,6 +7,7 @@ from textual.widget import Widget
 from rich.segment import Segment
 from textual.geometry import Size
 from textual.scroll_view import ScrollView
+from rich.style import Style
 
 
 _ROWS = 10
@@ -45,8 +46,12 @@ from pynput import keyboard
 import random
 
 
-class CheckerBoard(Widget):
-    """Render an 8x8 checkerboard."""
+class Block(Static):
+    pass
+    
+
+
+class TetrisGrid(Widget):
 
     COMPONENT_CLASSES = {
         "checkerboard--white-square",
@@ -54,34 +59,33 @@ class CheckerBoard(Widget):
     }
 
     DEFAULT_CSS = """
-    CheckerBoard .checkerboard--white-square {
+    TetrisGrid .checkerboard--white-square {
         background: #A5BAC9;
     }
-    CheckerBoard .checkerboard--black-square {
+    TetrisGrid .checkerboard--black-square {
         background: #004578;
     }
     """
 
     def render_line(self, y: int) -> Strip:
         """Render a line of the widget. y is relative to the top of the widget."""
+        global _ROWS
+        global _COLUMNS
+        
+        row_index = y // 2  # four lines per row
 
-        row_index = y // 4  # four lines per row
-
-        if row_index >= 8:
+        if row_index >= _ROWS:
             return Strip.blank(self.size.width)
 
-        is_odd = row_index % 2
 
-        white = self.get_component_rich_style("checkerboard--white-square")
-        black = self.get_component_rich_style("checkerboard--black-square")
+        tileColor = Style.parse("on green4")
 
         segments = [
-            Segment(" " * 8, black if (column + is_odd) % 2 else white)
-            for column in range(8)
+            Segment(" " * _ROWS, tileColor)
+            for column in range(_COLUMNS)
         ]
-        strip = Strip(segments, 8 * 8)
+        strip = Strip(segments, _ROWS * _COLUMNS)
         return strip
-
 
 
 class Menu(Widget):
@@ -135,8 +139,8 @@ class Tetris(App):    # Function for the main application
         menu = self.query_one(Menu)
         menu.remove()
         
-        checkerboard = CheckerBoard()
-        self.mount(checkerboard) 
+        mainGrid = TetrisGrid()
+        self.mount(mainGrid) 
         
 
     

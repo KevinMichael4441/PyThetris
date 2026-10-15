@@ -3,6 +3,10 @@ Menu {
     grid-size: 2 2;
 }
 
+Block {
+	background: yellow
+}
+
 .box {
     height: 50%;
 	width: 50%;
