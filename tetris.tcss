@@ -3,13 +3,9 @@ Menu {
     grid-size: 2 2;
 }
 
-Block {
-	background: yellow
-}
-
 .box {
-    height: 50%;
-	width: 50%;
+    height: 100%;
+	width: 100%;
     border: solid black;
 }
 
@@ -31,4 +27,11 @@ TetrisGrid .grid--black-square {
 }
 TetrisGrid .grid--orange-square {
     background: #C9721C;
+}
+
+
+EndScreen {
+	background: yellow;
+	text-align: center;
+	color: blue;
 }

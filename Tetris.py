@@ -1,6 +1,6 @@
 from textual.app import App, ComposeResult # The main application
-from textual.containers import ScrollableContainer
-from textual.widgets import Button, Footer, Header, Static
+from textual.containers import Container
+from textual.widgets import Button, Footer, Header, Static, Input
 from textual.theme import Theme
 from textual.strip import Strip
 from textual.widget import Widget
@@ -53,6 +53,11 @@ _ORANGE = "orange3"
 _COLORS = [_RED, _BLUE, _YELLOW, _GREEN, _ORANGE]
 _NUMCOLS = 5
 
+g_timeTaken = 0
+g_score = 0
+g_scoreMultiplier = 1;
+g_numBlocksProcessed = 0;
+
 class TetrisGrid(Widget):
 
     start_time = reactive(monotonic)
@@ -60,6 +65,9 @@ class TetrisGrid(Widget):
     total = reactive(0.0)
   
     def __init__(self, rows, columns: int) -> None:
+        global g_timeTaken
+
+        g_timeTaken = monotonic()
         super().__init__()
         self.rows = rows
         self.columns = columns
@@ -78,7 +86,8 @@ class TetrisGrid(Widget):
     def tick(self) -> None:
         global _FRAMETIME
         global g_time
-        
+        global g_numBlocksProcessed
+        global g_timeTaken
 
         
         self.time = self.total + (monotonic() - self.start_time)
@@ -96,10 +105,16 @@ class TetrisGrid(Widget):
             
             if (self.grid[self.activeBlock[1]][self.activeBlock[0]]) != _BLACK:
                 g_time = self.time
+                g_timeTaken = monotonic() - g_timeTaken
+                parent = self.parent
+                end = EndScreen()
+                parent.mount(end)
                 self.remove()
+                
                 
             
             self.grid[self.activeBlock[1]][self.activeBlock[0]] = self.activeColor
+            g_numBlocksProcessed += 1
             
             
         # Updating dt (and moving block down if dt is over threshold)
@@ -205,16 +220,38 @@ class Menu(Widget):
         yield Button("4x2", id="Small", variant="success", classes = "box")
         yield Button("6x7", id="Funny", variant="warning", classes = "box")
         
-class End(Widget):
-    def compose(self):
-        global g_time
         
-        minutes, seconds = divmod(time, 60)
+
+
+# AI CONTAINER:       
+class EndScreen(Container):
+    """Shown when the game ends — asks for name, then shows result."""
+    
+    def compose(self) -> ComposeResult:
+        yield Static("GAME OVER", id="game-over-title")
+        yield Static("Enter your name and press Enter:", id="name-prompt")
+        yield Input(placeholder="Your name…", id="name-input")
+        yield Static("", id="result")
+    
+    def on_input_submitted(self, event: Input.Submitted) -> None:
+        global g_score
+        global g_numBlocksProcessed
+        global g_scoreMultiplier
+        name = event.value.strip() or "Anonymous"
+        
+        # Format the elapsed time
+        minutes, seconds = divmod(g_timeTaken, 60)
         hours, minutes = divmod(minutes, 60)
         
-        message = f"Your name in {hours:02,.0f}:{minutes:02.0f}:{seconds:05.2f}"
+        g_score = (int)(((hours * 3600) + (minutes * 60) + (seconds * 0.5)) + g_numBlocksProcessed) * g_scoreMultiplier
         
-        yield Static(message)
+        message = f"{name} played for {hours:02.0f}:{minutes:02.0f}:{seconds:05.2f} and recieved a score of {g_score}"
+        
+        self.query_one("#result", Static).update(message)
+        self.query_one("#name-prompt", Static).update("Thanks for playing!")
+        event.input.remove()   # remove the input after submission
+
+
 
 class Tetris(App):    # Function for the main application
     BINDINGS = [
@@ -240,27 +277,30 @@ class Tetris(App):    # Function for the main application
         # Event handler for button pressed in menu
         button_id = event.button.id
         global gridSelected
+        global g_scoreMultiplier
         
         if button_id == "Large":
             _ROWS = 10
             _COLUMNS = 5
+            g_scoreMultiplier = 1
         elif button_id == "Medium":
             _ROWS = 8
             _COLUMNS = 4
+            g_scoreMultiplier = 3
         elif button_id == "Small":
             _ROWS = 4
             _COLUMNS = 2
+            g_scoreMultiplier = 10
         elif button_id == "Funny":
             _ROWS = 6
             _COLUMNS = 7
+            g_scoreMultiplier = 5
         
         gridSelected = True
         menu = self.query_one(Menu)
         menu.remove()
        
         self.mount(TetrisGrid(_ROWS, _COLUMNS)) 
-        self.mount(End())
-        
 
     
     
