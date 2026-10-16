@@ -45,7 +45,7 @@ import random
    
 _BLACK = "grey0"
 _RED = "red"
-_BLUE = "blue3"
+_BLUE = "turquoise2"
 _YELLOW = "yellow3"
 _GREEN = "dark_green"
 _ORANGE = "orange3"
@@ -83,6 +83,8 @@ class TetrisGrid(Widget):
         self.set_interval(_INTERVAL, self.tick)
         self.tick()  # immediate first update
 
+
+    # The looping tick mechanism was yoinked from AI as mentioned in brief
     def tick(self) -> None:
         global _FRAMETIME
         global g_time
@@ -239,7 +241,7 @@ class EndScreen(Container):
         global g_scoreMultiplier
         name = event.value.strip() or "Anonymous"
         
-        # Format the elapsed time
+        # Format the elapsed time - MY CODE
         minutes, seconds = divmod(g_timeTaken, 60)
         hours, minutes = divmod(minutes, 60)
         

@@ -10,28 +10,10 @@ Menu {
 }
 
 
-TetrisGrid .grid--red-square {
-    background: #AD2337;
-}
-TetrisGrid .grid--blue-square {
-    background: #2341AD;
-}
-TetrisGrid .grid--yellow-square {
-    background: #DED733;
-}
-TetrisGrid .grid--green-square {
-    background: #3A8F31;
-}
-TetrisGrid .grid--black-square {
-    background: #2B2727;
-}
-TetrisGrid .grid--orange-square {
-    background: #C9721C;
-}
-
-
 EndScreen {
 	background: yellow;
-	text-align: center;
 	color: blue;
+	
+	/*Yoinked from Marie-Elise for better end game aesthetic/UI*/
+	width: 60; height: auto; border: round $primary; padding: 1 2; margin: 1;
 }
