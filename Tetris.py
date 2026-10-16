@@ -41,13 +41,10 @@ from pynput import keyboard
 import random
 
 
-class Block(Static):
-    pass
-    
-    
+   
 _BLACK = "grey0"
 _RED = "red"
-_BLUE = "bright_blue"
+_BLUE = "blue3"
 _YELLOW = "yellow3"
 _GREEN = "dark_green"
 _ORANGE = "orange3"
@@ -142,11 +139,25 @@ class TetrisGrid(Widget):
     
         self.refresh()
         
-    def move_left():
-        pass
+    def move_left(self):
+        if self.activeBlock[0] == None:
+            return
+        if self.activeBlock[1] - 1 >= 0:
+            if self.grid[self.activeBlock[1] - 1][self.activeBlock[0]] == _BLACK:
+                self.grid[self.activeBlock[1]][self.activeBlock[0]] = _BLACK
+                self.activeBlock[1] -= 1
+                self.grid[self.activeBlock[1]][self.activeBlock[0]] = self.activeColor
+        self.refresh()
     
-    def move_right():
-        pass
+    def move_right(self):
+        if self.activeBlock[0] == None:
+            return
+        if self.activeBlock[1] + 1 <= self.columns - 1:
+            if self.grid[self.activeBlock[1] + 1][self.activeBlock[0]] == _BLACK:
+                self.grid[self.activeBlock[1]][self.activeBlock[0]] = _BLACK
+                self.activeBlock[1] += 1
+                self.grid[self.activeBlock[1]][self.activeBlock[0]] = self.activeColor
+        self.refresh()
     
     def render_line(self, y: int) -> Strip:
         """Render a line of the widget. y is relative to the top of the widget."""
@@ -166,7 +177,10 @@ class TetrisGrid(Widget):
         segments = []
         for c in range(self.columns):
             value = self.grid[c][row_index]
-            style = Style(bgcolor=_BLACK) if value == _BLACK else Style(bgcolor=value)
+            if value == _BLACK:
+                style = Style(bgcolor = _BLACK)
+            else:
+                style = Style(bgcolor = value)
             segments.append(Segment(" " * cell_width, style))
             
         strip = Strip(segments, total_width)
@@ -179,13 +193,17 @@ class Menu(Widget):
         yield Button("8x4", id="Medium", variant="warning", classes = "box")
         yield Button("4x2", id="Small", variant="success", classes = "box")
         yield Button("6x7", id="Funny", variant="warning", classes = "box")
+        
+class End(Widget):
+    def compose(self):
+        yield Static("Lorem Ipsum")
 
 class Tetris(App):    # Function for the main application
     BINDINGS = [
             # (key, action name, description)
             ("w", "toggle_dark_mode", "To Toggle Dark Mode"),
-            ("a", "move_left", "To move left"),
-            ("d", "move_right", "To move Right"),
+            ("left", "move_left", "To move left"),
+            ("right", "move_right", "To move Right"),
         ]
        
      
@@ -244,10 +262,18 @@ class Tetris(App):    # Function for the main application
                     )
     
     def action_move_left(self):
-        pass
+        try:
+            grid = self.query_one(TetrisGrid)
+            grid.move_left()
+        except:
+            pass
         
     def action_move_right(self):
-        pass
+        try:
+            grid = self.query_one(TetrisGrid)
+            grid.move_right()
+        except:
+            pass
 
 
 if __name__ == "__main__":  # Running the application on main   
