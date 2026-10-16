@@ -9,11 +9,12 @@ from textual.geometry import Size, Offset, Region
 from textual.scroll_view import ScrollView
 from rich.style import Style
 from time import monotonic
-
+from textual.reactive import reactive
 
 _INTERVAL = 0.3
 _FRAMETIME = 0.1
 
+g_time = 0
 
 tetris_theme = Theme(   
     name="tetris",
@@ -54,6 +55,9 @@ _NUMCOLS = 5
 
 class TetrisGrid(Widget):
 
+    start_time = reactive(monotonic)
+    time = reactive(0.0)
+    total = reactive(0.0)
   
     def __init__(self, rows, columns: int) -> None:
         super().__init__()
@@ -73,8 +77,15 @@ class TetrisGrid(Widget):
 
     def tick(self) -> None:
         global _FRAMETIME
+        global g_time
+        
+
+        
+        self.time = self.total + (monotonic() - self.start_time)
+        
         self.previoousFrameTime = self.currentFrameTime
-        self.currentFrameTime = monotonic()        
+        self.currentFrameTime = monotonic() 
+        
         
         # Set an activeBlock - block that falls
         if (self.activeBlock[0] == None):
@@ -84,8 +95,9 @@ class TetrisGrid(Widget):
             #activeBlock[1] = 2
             
             if (self.grid[self.activeBlock[1]][self.activeBlock[0]]) != _BLACK:
-                self.remove()       # Will this work?
-                # Mount End Game Screen
+                g_time = self.time
+                self.remove()
+                
             
             self.grid[self.activeBlock[1]][self.activeBlock[0]] = self.activeColor
             
@@ -108,8 +120,7 @@ class TetrisGrid(Widget):
                 self.grid[self.activeBlock[1]][self.activeBlock[0]] = self.activeColor
                 
                 
-                
-                
+
             def isRowFilled(t_grid, t_currentRow, t_maxCols):
                 colCount = 0;
     
@@ -196,12 +207,19 @@ class Menu(Widget):
         
 class End(Widget):
     def compose(self):
-        yield Static("Lorem Ipsum")
+        global g_time
+        
+        minutes, seconds = divmod(time, 60)
+        hours, minutes = divmod(minutes, 60)
+        
+        message = f"Your name in {hours:02,.0f}:{minutes:02.0f}:{seconds:05.2f}"
+        
+        yield Static(message)
 
 class Tetris(App):    # Function for the main application
     BINDINGS = [
             # (key, action name, description)
-            ("w", "toggle_dark_mode", "To Toggle Dark Mode"),
+            ("d", "toggle_dark_mode", "To Toggle Dark Mode"),
             ("left", "move_left", "To move left"),
             ("right", "move_right", "To move Right"),
         ]
@@ -241,6 +259,7 @@ class Tetris(App):    # Function for the main application
         menu.remove()
        
         self.mount(TetrisGrid(_ROWS, _COLUMNS)) 
+        self.mount(End())
         
 
     
