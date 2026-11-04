@@ -1,0 +1,23 @@
+Things todo:
+
+Front page that asks for grid length and width:
+On player submitting, send a post
+
+Game page:
+Create grid (based on player input from before) -> All black in a Pink background maybe centered?
+
+Randomly choose a col to drop blocks in
+Drop the block after n time
+redraw grid when block dropped
+
+block can go left or right from keyboard -> edge detection asw
+redraw grid when block moves
+
+Add timer (Already in just need to make it HH::MM::SS)
+
+Update score based on whatever
+
+If col[0] is filled when randomly chosen to drop block into, end the game.
+
+
+

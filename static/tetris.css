@@ -1,0 +1,19 @@
+Menu {
+    layout: grid;
+    grid-size: 2 2;
+}
+
+.box {
+    height: 100%;
+	width: 100%;
+    border: solid black;
+}
+
+
+EndScreen {
+	background: yellow;
+	color: blue;
+	
+	/*Yoinked from Marie-Elise for better end game aesthetic/UI*/
+	width: 60; height: auto; border: round $primary; padding: 1 2; margin: 1;
+}
