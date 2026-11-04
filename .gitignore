@@ -1,1 +1,14 @@
-*
+pyvenv.cfg
+.lock
+CACHEDIR.TAG
+secret.txt
+
+Scripts/**
+Lib/**
+
+__pycache__/**
+
+.ruff_cache/**
+
+
+
