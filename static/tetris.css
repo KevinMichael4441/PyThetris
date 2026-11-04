@@ -3,17 +3,36 @@ Menu {
     grid-size: 2 2;
 }
 
-.box {
-    height: 100%;
-	width: 100%;
-    border: solid black;
+div.whitebox {
+    color: black;
+    background-color: white;
 }
 
+div.blackbox {
+    color: white;
+    background-color: black;
+}
 
-EndScreen {
-	background: yellow;
-	color: blue;
+.menu-container {
+          
+            /* Apply Flexbox*/
+            display: flex;
+            
+          /* Horizontally center the Table*/
+            justify-content: center;
+          	
+          /* Verticalyy center the Table*/
+            align-items: center;
+           
+			/* TO display the container box*/          
+          	height: 95vh;
+            width: 95vw;
+            border: 1px solid black;
+        }
 	
-	/*Yoinked from Marie-Elise for better end game aesthetic/UI*/
-	width: 60; height: auto; border: round $primary; padding: 1 2; margin: 1;
-}
+	
+table,
+        th,
+        td {
+            border: 1px solid black;
+        }

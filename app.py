@@ -3,10 +3,17 @@ from flask import Flask, render_template, session, request
 import random
 
 app = Flask(__name__)
-app.secret_key = "fhdsjhgkjsadghhgdshdgdsngjdsfnvjdf njdfnvngdfkgjndfgj"
+app.secret_key = "moffdnanpampaugagnpavnoy8avnamnvaiuybhanpaiygbnagnaguijagbbiygagaeigb"
 
 
 @app.get("/")
+@app.get("/home")
+def display_home():
+    return render_template(
+    "home.html"
+    )
+
+
 @app.get("/showgrid")
 def display_the_grid():
     session["count"] = 0
