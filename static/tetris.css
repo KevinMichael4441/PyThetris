@@ -5,30 +5,37 @@ Menu {
 
 
 div.whitebox {
+    color: white;
     background-color: white;
 }
 
 div.blackbox {
+    color: black;
     background-color: black;
 }
 
 div.greenbox {
+    color: rgb(46, 187, 46);
     background-color: rgb(46, 187, 46);
 }
 
 div.redbox {
+    color: rgb(226, 71, 71);
     background-color: rgb(226, 71, 71);
 }
 
 div.bluebox {
+    color: rgb(20, 168, 194);
     background-color: rgb(20, 168, 194);
 }
 
 div.yellowbox {
+    color: rgb(229, 255, 0);
     background-color: rgb(229, 255, 0);
 }
 
 div.orangebox {
+    color: rgb(212, 131, 25);
     background-color: rgb(212, 131, 25);
 }
 

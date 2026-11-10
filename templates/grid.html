@@ -21,7 +21,7 @@
     hx-trigger="every 1s"
     hx-target="this"
     hx-swap="innerHTML">
-    Time is ticking...
+    You have played for 00:00:00.00
 </div>
 
 
@@ -38,10 +38,11 @@
 </div>
 
 <div
-    hx-post="/updateBoard"
+    hx-post="/update_grid"
     hx-trigger="every 1s"
-    hx-target="{{col}}, {{row}}"
+    hx-target="this"
     hx-swap="innerHTML">
+    TEST
 </div>
 
 
