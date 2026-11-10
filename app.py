@@ -23,8 +23,10 @@ def display_home():
 
 @app.get("/")
 @app.get("/showgrid")
-def display_the_grid():
+def init_the_grid():
     session["count"] = 0
+    session["activeBlock"] = [None,None]
+    session["activeColour"] = None
     
     session["rows"] = 10
     session["cols"] = 5
@@ -50,6 +52,8 @@ def process_the_click(row, col, colour):
     )
 
 
+
+
 @app.post("/counting")
 def maintain_count():
     session["count"] = session["count"] + 1
@@ -59,8 +63,35 @@ def maintain_count():
 @app.post("/keypress")
 def which_key_pressed():
     key_pressed = request.form["keyPressed"]
-    return f"You pressed: {key_pressed}."
+    if key_pressed == "ArrowLeft":
+        move_left()
+    elif key_pressed == "ArrowRight":
+        move_right()
+    return f"You Pressed {key_pressed}"
 
+
+
+def move_left():
+    if session["activeBlock"][0] == None:
+        return
+    if session["activeBlock"][1] - 1 >= 0:
+        if session["grid"][session["activeBlock"][1] - 1][session["activeBlock"][0]] == _BLACK:
+            session["grid"][session["activeBlock"][1]][session["activeBlock"][0]] = _BLACK
+            session["activeBlock"][1] -= 1
+            session["grid"][session["activeBlock"]][session["activeBlock"][0]] = session["activeColour"]
+    #self.refresh()
+    # UPDATE GRID
+    
+def move_right():
+    if session["activeBlock"][0] == None:
+        return
+    if session["activeBlock"][1] + 1 <= session["cols"] - 1:
+        if session["grid"][session["activeBlock"][1] + 1][session["activeBlock"][0]] == _BLACK:
+            session["grid"][session["activeBlock"][1]][session["activeBlock"][0]] = _BLACK
+            session["activeBlock"][1] += 1
+            session["grid"][session["activeBlock"][1]][session["activeBlock"][0]] = session["activeColour"]
+    #self.refresh()
+    # UPDATE GRID
 
 if __name__ == "__main__":
     app.run(debug=True)
