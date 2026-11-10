@@ -3,14 +3,33 @@ Menu {
     grid-size: 2 2;
 }
 
+
 div.whitebox {
-    color: black;
     background-color: white;
 }
 
 div.blackbox {
-    color: white;
     background-color: black;
+}
+
+div.greenbox {
+    background-color: rgb(46, 187, 46);
+}
+
+div.redbox {
+    background-color: rgb(226, 71, 71);
+}
+
+div.bluebox {
+    background-color: rgb(20, 168, 194);
+}
+
+div.yellowbox {
+    background-color: rgb(229, 255, 0);
+}
+
+div.orangebox {
+    background-color: rgb(212, 131, 25);
 }
 
 .menu-container {

@@ -20,4 +20,4 @@ Update score based on whatever
 If col[0] is filled when randomly chosen to drop block into, end the game.
 
 
-
+COlOUR and player NAME
