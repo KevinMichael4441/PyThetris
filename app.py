@@ -53,7 +53,8 @@ def which_key_pressed():
         "grid.html",
         rowcount=session["rows"],
         colcount=session["cols"],
-        grid = session["grid"]
+        grid = session["grid"], 
+        message = calculate_time()
     )
 
 
@@ -121,6 +122,16 @@ def update_grid():
     print(grid)
     
     
+    return render_template(
+        "grid.html",
+        rowcount=session["rows"],
+        colcount=session["cols"],
+        grid = session["grid"],
+        message = calculate_time()
+    )
+    
+    
+def calculate_time():
     session["count"] = session["count"] + 1
     # Format the elapsed time - MY CODE
     minutes, seconds = divmod(session["count"], 60)
@@ -130,13 +141,7 @@ def update_grid():
     
     message = f"You have played for {hours:02.0f}:{minutes:02.0f}:{seconds:05.2f}"# and recieved a score of {g_score}"
     
-    return render_template(
-        "grid.html",
-        rowcount=session["rows"],
-        colcount=session["cols"],
-        grid = session["grid"],
-        message = message
-    )
+    return message
 
 
 def move_left():
