@@ -2,7 +2,8 @@
 
 {% block mainbody %}
 
-<table border="1">
+<div id = grid>
+<table>
 
     {% for row in range(rowcount) %}
         <tr>
@@ -15,13 +16,7 @@
     {% endfor %}
 </table>
 
-
-<div
-    hx-post="/counting"
-    hx-trigger="every 1s"
-    hx-target="this"
-    hx-swap="innerHTML">
-    You have played for 00:00:00.00
+{{message}}
 </div>
 
 
@@ -29,20 +24,14 @@
     hx-post="/keypress"
     hx-trigger="keyup[key=='ArrowLeft' || key=='ArrowRight'] from:body"
     hx-vals="js:{ keyPressed: event.key }"
-    hx-target="#key-display" >
-
-    <div id="key-display">
-        Press either left or right arrow...
-    </div>
-
+    hx-target="#grid" >
 </div>
 
 <div
     hx-post="/update_grid"
     hx-trigger="every 1s"
-    hx-target="this"
+    hx-target="#grid"
     hx-swap="innerHTML">
-    TEST
 </div>
 
 

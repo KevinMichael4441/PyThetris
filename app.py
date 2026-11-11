@@ -41,27 +41,6 @@ def init_the_grid():
     )
 
 
-def display_grid():
-    return render_template(
-        "grid.html",
-        rowcount = session["rows"],
-        colcount = session["cols"],
-        grid = session["grid"]
-    )
-
-@app.post("/counting")
-def maintain_count():
-    session["count"] = session["count"] + 1
-    # Format the elapsed time - MY CODE
-    minutes, seconds = divmod(session["count"], 60)
-    hours, minutes = divmod(minutes, 60)
-    
-    #g_score = (int)(((hours * 3600) + (minutes * 60) + (seconds * 0.5)) + g_numBlocksProcessed) * g_scoreMultiplier
-    
-    message = f"You have played for {hours:02.0f}:{minutes:02.0f}:{seconds:05.2f}"# and recieved a score of {g_score}"
-    return message
-
-
 @app.post("/keypress")
 def which_key_pressed():
     key_pressed = request.form["keyPressed"]
@@ -69,7 +48,13 @@ def which_key_pressed():
         move_left()
     elif key_pressed == "ArrowRight":
         move_right()
-    return f"You Pressed {key_pressed}"
+    
+    return render_template(
+        "grid.html",
+        rowcount=session["rows"],
+        colcount=session["cols"],
+        grid = session["grid"]
+    )
 
 
 
@@ -83,13 +68,8 @@ def update_grid():
         session["activeColour"] = _COLOURS[random.randint(0, _NUM_COLOURS-1)]
         #activeBlock[1] = 2
         
-        if (session["grid"][session["activeBlock"][1]][session["activeBlock"][0]]) != _BLACK:
-            pass
-        
-        
-            ## END GAME CODE
-            ## GOES HERE
-            ## RETURN RENDER TEMPLATE FOR END GAME????
+        if (session["grid"][session["activeBlock"][1]][session["activeBlock"][0]]) != _BLACK: 
+            session["grid"] = [[_BLACK for i in range(session["rows"])] for i in range(session["cols"])]
     
     
     rowToPass = session["activeBlock"][0]
@@ -136,41 +116,48 @@ def update_grid():
 
     
         
-    session["count"] = session["count"] + 1
-    
+  
     grid = session["grid"]
     print(grid)
+    
+    
+    session["count"] = session["count"] + 1
+    # Format the elapsed time - MY CODE
+    minutes, seconds = divmod(session["count"], 60)
+    hours, minutes = divmod(minutes, 60)
+    
+    #g_score = (int)(((hours * 3600) + (minutes * 60) + (seconds * 0.5)) + g_numBlocksProcessed) * g_scoreMultiplier
+    
+    message = f"You have played for {hours:02.0f}:{minutes:02.0f}:{seconds:05.2f}"# and recieved a score of {g_score}"
     
     return render_template(
         "grid.html",
         rowcount=session["rows"],
         colcount=session["cols"],
-        grid = session["grid"]
+        grid = session["grid"],
+        message = message
     )
 
 
-@app.get("/hmm")
 def move_left():
     if session["activeBlock"][0] == None:
         return
     if session["activeBlock"][1] - 1 >= 0:
-        if session["grid"][session["activeBlock"][1] - 1][session["activeBlock"][0]] == _BLACK:
+        if session["grid"][((session["activeBlock"][1]) - 1)][session["activeBlock"][0]] == _BLACK:
             session["grid"][session["activeBlock"][1]][session["activeBlock"][0]] = _BLACK
             session["activeBlock"][1] -= 1
-            session["grid"][session["activeBlock"]][session["activeBlock"][0]] = session["activeColour"]
-
-    display_grid()
+            session["grid"][session["activeBlock"][1]][session["activeBlock"][0]] = session["activeColour"]
+    
     
 def move_right():
     if session["activeBlock"][0] == None:
         return
     if session["activeBlock"][1] + 1 <= session["cols"] - 1:
-        if session["grid"][session["activeBlock"][1] + 1][session["activeBlock"][0]] == _BLACK:
-            session["grid"][session["activeBlock"][1]][session["activeBlock"][0]] = _BLACK
+        if session["grid"][((session["activeBlock"][1]) + 1)][session["activeBlock"][0]] == _BLACK:
+            session["grid"][(session["activeBlock"][1])][(session["activeBlock"][0])] = _BLACK
             session["activeBlock"][1] += 1
-            session["grid"][session["activeBlock"][1]][session["activeBlock"][0]] = session["activeColour"]
-            
-    display_grid()
+            session["grid"][(session["activeBlock"][1])][(session["activeBlock"][0])] = session["activeColour"]
+
 
 if __name__ == "__main__":
     app.run(debug=True)
