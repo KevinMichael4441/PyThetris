@@ -16,7 +16,18 @@
     {% endfor %}
 </table>
 
-{{message}}
+<!--
+Source - https://stackoverflow.com/a/47610447
+Posted by Michel Fernandes, modified by community. See post 'Timeline' for change history
+Retrieved 2026-11-12, License - CC BY-SA 3.0
+-->
+{% if gameover == True %}
+    <p><a href = "click.html">You Lost! Click here to get score!</a></p>   
+{% else %}
+    <p>{{message}}</p>
+{% endif %}
+
+    
 </div>
 
 

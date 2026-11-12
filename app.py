@@ -28,9 +28,10 @@ def init_the_grid():
     session["count"] = 0
     session["activeBlock"] = [None,None]
     session["activeColour"] = None
+    session["gameOver"] = False
     
-    session["rows"] = 10
-    session["cols"] = 5
+    session["rows"] = 5
+    session["cols"] = 3
     session["grid"] = [[_BLACK for i in range(session["rows"])] for i in range(session["cols"])]
    
     return render_template(
@@ -53,7 +54,8 @@ def which_key_pressed():
         "grid.html",
         rowcount=session["rows"],
         colcount=session["cols"],
-        grid = session["grid"], 
+        grid = session["grid"],
+        gameover = session["gameOver"], 
         message = calculate_time()
     )
 
@@ -64,13 +66,13 @@ def which_key_pressed():
 def update_grid():
     
     if (session["activeBlock"][0] == None):
-        session["activeBlock"][0] = 0
+        session["activeBlock"][0] = -1
         session["activeBlock"][1] = random.randint(0,session["cols"]-1)
         session["activeColour"] = _COLOURS[random.randint(0, _NUM_COLOURS-1)]
         #activeBlock[1] = 2
         
-        if (session["grid"][session["activeBlock"][1]][session["activeBlock"][0]]) != _BLACK: 
-            session["grid"] = [[_BLACK for i in range(session["rows"])] for i in range(session["cols"])]
+        if (session["grid"][session["activeBlock"][1]][0]) != _BLACK: 
+            session["gameOver"] = True
     
     
     rowToPass = session["activeBlock"][0]
@@ -127,6 +129,7 @@ def update_grid():
         rowcount=session["rows"],
         colcount=session["cols"],
         grid = session["grid"],
+        gameover = session["gameOver"],
         message = calculate_time()
     )
     
@@ -145,6 +148,8 @@ def calculate_time():
 
 
 def move_left():
+    session["count"] = session["count"] - 1
+    
     if session["activeBlock"][0] == None:
         return
     if session["activeBlock"][1] - 1 >= 0:
@@ -155,6 +160,8 @@ def move_left():
     
     
 def move_right():
+    session["count"] = session["count"] - 1
+    
     if session["activeBlock"][0] == None:
         return
     if session["activeBlock"][1] + 1 <= session["cols"] - 1:
