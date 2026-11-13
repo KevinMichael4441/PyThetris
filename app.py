@@ -18,14 +18,15 @@ _NUM_COLOURS = 5
 @app.get("/")
 @app.get("/home")
 def display_home():
+
+
     return render_template(
     "home.html"
     )
 
 
-
-@app.get("/grid")
-def init_the_grid():
+@app.get("/grid/<row>/<col>")
+def init_the_grid(row, col):
     session["count"] = 0
     session["activeBlock"] = [None,None]
     session["activeColour"] = None
@@ -35,10 +36,10 @@ def init_the_grid():
 
     session["name"] = "Kevin"
     
-    session["rows"] = 5
-    session["cols"] = 3
+    session["rows"] = int(row)
+    session["cols"] = int(col)
     session["grid"] = [[_BLACK for i in range(session["rows"])] for i in range(session["cols"])]
-   
+
     return render_template(
         "grid.html",
         rowcount=session["rows"],
@@ -71,7 +72,7 @@ def which_key_pressed():
 def update_grid():
     
     if (session["activeBlock"][0] == None):
-        session["activeBlock"][0] = -1
+        session["activeBlock"][0] = 0
         session["activeBlock"][1] = random.randint(0,session["cols"]-1)
         session["activeColour"] = _COLOURS[random.randint(0, _NUM_COLOURS-1)]
         #activeBlock[1] = 2
@@ -181,16 +182,28 @@ def move_right():
 
 @app.get("/gameOver")
 def display_game_over():
-    # Format the elapsed time - MY CODE
+
+    
+
+    return render_template(
+        "gameover.html"
+    )
+
+
+@app.post("/process_form")
+def process_form():
+    name = request.form["the_name"]
 
     minutes, seconds = divmod(session["count"], 60)
     hours, minutes = divmod(minutes, 60)
         
     score = (int)(((hours * 3600) + (minutes * 60) + (seconds * 0.5)) + session["blocksProcessed"]) * session["scoreMultiplier"]
-        
-    message = f"{session["name"]} played for {hours:02.0f}:{minutes:02.0f}:{seconds:05.2f} and recieved a score of {score}"
 
-    return message
+    return render_template(
+        "data.html",
+        name=request.form["the_name"],
+        score = score,
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)
