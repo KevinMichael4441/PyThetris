@@ -6,12 +6,20 @@ app = Flask(__name__)
 app.secret_key = "moffdnanpampaugagnpavnoy8avnamnvaiuybhanpaiygbnagnaguijagbbiygagaeigb"
 
 
+
 @app.get("/")
 @app.get("/home")
 def display_home():
     return render_template(
     "home.html"
     )
+
+
+@app.post("/initgame/<row>/<col>")
+def get_row_col(row, col):
+    session["s_row"] = row
+    session["s_col"] = col
+    return f"{session["s_row"]} by {session["s_col"]}"
 
 
 @app.get("/showgrid")
