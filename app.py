@@ -30,11 +30,10 @@ def init_the_grid(row, col):
     session["count"] = 0
     session["activeBlock"] = [None,None]
     session["activeColour"] = None
-    session["gameOver"] = True
+    session["gameOver"] = False
     session["blocksProcessed"] = 0
     session["scoreMultiplier"] = 1
-
-    session["name"] = "Kevin"
+    session["dropBlock"] = False
     
     session["rows"] = int(row)
     session["cols"] = int(col)
@@ -70,7 +69,32 @@ def which_key_pressed():
 # SHOULD BE RUN EVERY SECOND
 @app.post("/update_grid")
 def update_grid():
-    
+
+    if session["gameOver"]:
+        return render_template(
+        "grid.html",
+        rowcount=session["rows"],
+        colcount=session["cols"],
+        grid = session["grid"],
+        gameover = session["gameOver"],
+        message = calculate_time()
+    )
+
+
+    if not session["dropBlock"]:
+        session["dropBlock"] = True
+
+        return render_template(
+        "grid.html",
+        rowcount=session["rows"],
+        colcount=session["cols"],
+        grid = session["grid"],
+        gameover = session["gameOver"],
+        message = calculate_time()
+    )
+
+
+
     if (session["activeBlock"][0] == None):
         session["activeBlock"][0] = 0
         session["activeBlock"][1] = random.randint(0,session["cols"]-1)
@@ -79,11 +103,23 @@ def update_grid():
         
         if (session["grid"][session["activeBlock"][1]][0]) != _BLACK: 
             session["gameOver"] = True
+        else:
+            session["grid"][session["activeBlock"][1]][session["activeBlock"][0]] = session["activeColour"]
+
+        return render_template(
+            "grid.html",
+            rowcount=session["rows"],
+            colcount=session["cols"],
+            grid = session["grid"],
+            gameover = session["gameOver"],
+            message = calculate_time()
+        )
+
     
     
     rowToPass = session["activeBlock"][0]
     session["blocksProcessed"] += 1
-            
+
     #drop block one level down
     if session["activeBlock"][0] + 1 == session["rows"]: #last row
         session["activeBlock"][0] = None
@@ -110,13 +146,11 @@ def update_grid():
             
             
     def clearRow(t_grid, t_currentRow, t_maxCols):
-        for i in range(t_currentRow, -1, -1):
+        for row in range(t_currentRow, 0, -1):
             for col in range(t_maxCols):
-                if t_currentRow - 1 >= 0:
-                    t_grid[col][t_currentRow] = t_grid[col][t_currentRow - 1]
-
-            t_currentRow -= 1
-        
+                t_grid[col][row] = t_grid[col][row - 1]
+        for col in range(t_maxCols):
+            t_grid[col][0] = _BLACK
         return t_grid
 
         
@@ -129,8 +163,7 @@ def update_grid():
   
     grid = session["grid"]
     print(grid)
-    
-    
+
     return render_template(
         "grid.html",
         rowcount=session["rows"],
