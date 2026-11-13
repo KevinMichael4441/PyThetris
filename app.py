@@ -15,6 +15,7 @@ _ORANGE = "orange"
 _COLOURS = [_RED, _BLUE, _YELLOW, _GREEN, _ORANGE]
 _NUM_COLOURS = 5
 
+@app.get("/")
 @app.get("/home")
 def display_home():
     return render_template(
@@ -22,13 +23,17 @@ def display_home():
     )
 
 
-@app.get("/")
-@app.get("/initgrid")
+
+@app.get("/grid")
 def init_the_grid():
     session["count"] = 0
     session["activeBlock"] = [None,None]
     session["activeColour"] = None
-    session["gameOver"] = False
+    session["gameOver"] = True
+    session["blocksProcessed"] = 0
+    session["scoreMultiplier"] = 1
+
+    session["name"] = "Kevin"
     
     session["rows"] = 5
     session["cols"] = 3
@@ -76,6 +81,7 @@ def update_grid():
     
     
     rowToPass = session["activeBlock"][0]
+    session["blocksProcessed"] += 1
             
     #drop block one level down
     if session["activeBlock"][0] + 1 == session["rows"]: #last row
@@ -170,6 +176,21 @@ def move_right():
             session["activeBlock"][1] += 1
             session["grid"][(session["activeBlock"][1])][(session["activeBlock"][0])] = session["activeColour"]
 
+
+
+
+@app.get("/gameOver")
+def display_game_over():
+    # Format the elapsed time - MY CODE
+
+    minutes, seconds = divmod(session["count"], 60)
+    hours, minutes = divmod(minutes, 60)
+        
+    score = (int)(((hours * 3600) + (minutes * 60) + (seconds * 0.5)) + session["blocksProcessed"]) * session["scoreMultiplier"]
+        
+    message = f"{session["name"]} played for {hours:02.0f}:{minutes:02.0f}:{seconds:05.2f} and recieved a score of {score}"
+
+    return message
 
 if __name__ == "__main__":
     app.run(debug=True)
