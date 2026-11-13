@@ -1,9 +1,3 @@
-Menu {
-    layout: grid;
-    grid-size: 2 2;
-}
-
-
 div.whitebox {
     color: white;
     background-color: white;
@@ -39,7 +33,9 @@ div.orangebox {
     background-color: rgb(212, 131, 25);
 }
 
-.menu-container {
+.menu-container 
+/* https://www.geeksforgeeks.org/css/how-to-center-a-table-with-css/ */
+{
           
             /* Apply Flexbox*/
             display: flex;
@@ -54,11 +50,24 @@ div.orangebox {
           	height: 95vh;
             width: 95vw;
             border: 1px solid black;
-        }
+
+            background-color: rgb(31, 106, 29);
+            font-size: 20px;
+
+}
 	
-	
-table,
-        th,
-        td {
-            border: 1px solid black;
-        }
+
+table {
+    border: 3px solid rgb(107, 20, 104);;
+}
+
+table.options {
+    border: hidden;
+}
+
+
+td.options {
+    border: 3px solid;
+    border-color: rgb(107, 20, 104);;
+    
+}
